@@ -17,15 +17,9 @@ class MoviesController < ApplicationController
       @all_ratings.append(obj.rating)
     end
     
-    # determine if it's a new session by checking if params are all empty
-    if (not params[:sort_by]) and (not params[:ratings])
-      session.delete(:ratings)
-      session.delete(:sort_by)
-    end
-    
     # initialize session info for default rating filter
-    if not session[:ratings]
-      session[:ratings] = @all_ratings
+    if not session[:selected_ratings]
+      session[:selected_ratings] = @all_ratings
     end
     
     @selected_ratings = @all_ratings # initialize to all ratings
