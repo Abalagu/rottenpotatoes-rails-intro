@@ -45,6 +45,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'guard-rspec'
 
+  gem 'sqlite3' # sqlite 3 for local test
   # Use sqlite3 as the database for Active Record
   gem 'pg', '~> 0.21'
 

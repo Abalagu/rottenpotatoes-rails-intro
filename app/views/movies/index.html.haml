@@ -1,12 +1,19 @@
 -#  This file is app/views/movies/index.html.haml
-%h2 All Movies
+%h2 All Movies Lately Changed
 
 %table#movies.table.table-striped.col-md-12
   %thead
     %tr
-      %th Movie Title
+      - if @title_sorted
+        %th.sorted.hilite.text-danger#title_header= link_to "Movie Title", movies_path(:sort_by_title=>true)
+      - else
+        %th#title_header= link_to "Movie Title", movies_path(:sort_by_title=>true)
+        
       %th Rating
-      %th Release Date
+      - if @date_sorted
+        %th.sorted.hilite.text-danger#release_date_header= link_to "Release Date", movies_path(:sort_by_date=>true)
+      - else
+        %th#release_date_header= link_to "Release Date", movies_path(:sort_by_date=>true)
       %th More Info
   %tbody
     - @movies.each do |movie|
