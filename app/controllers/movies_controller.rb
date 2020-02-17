@@ -11,19 +11,42 @@ class MoviesController < ApplicationController
   end
 
   def index
-    # @movies = Movie.all
-    @title_sorted = false
-    @date_sorted = false
-    if params[:sort_by_title]
-      @movies = Movie.order(:title).all
-      @title_sorted = true # for conditional add of css
-    elsif params[:sort_by_date]
-      @movies = Movie.order(:release_date).all
-      @date_sorted = true
+    # get unique rating values from database
+    @all_ratings = []
+    Movie.get_ratings().each do |obj|
+      @all_ratings.append(obj.rating)
+    end
+    
+    # determine if it's a new session by checking if params are all empty
+    if (not params[:sort_by]) and (not params[:ratings])
+      session.delete(:ratings)
+      session.delete(:sort_by)
+    end
+    
+    # initialize session info for default rating filter
+    if not session[:ratings]
+      session[:ratings] = @all_ratings
+    end
+    
+    @selected_ratings = @all_ratings # initialize to all ratings
+    if params[:ratings] # handle rating filter
+      @selected_ratings = params[:ratings].keys
+      @movies = Movie.where(:rating=>@selected_ratings)
+      session[:selected_ratings] = @selected_ratings # store filter into session
     else
-      @movies = Movie.all
+      @movies = Movie.where(:rating=>session[:selected_ratings]) # use default filter stored in session
+    end
+    
+    @sort_by = params[:sort_by]
+    if @sort_by # handle sorting
+      @movies = @movies.order(@sort_by)
+      session[:sort_by] = @sort_by
+    else
+      @movies = @movies.order(session[:sort_by]) # use default sorting
     end
   end
+  
+  
 
   def new
     # default: render 'new' template
